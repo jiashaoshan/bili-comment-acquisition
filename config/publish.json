@@ -1,0 +1,12 @@
+{
+  "_说明": "B站评论区获客配置",
+  "max_comments_per_run": 5,
+  "max_comments_per_day": 20,
+  "max_comments_per_hour": 3,
+  "base_interval_seconds": 60,
+  "active_hours": [8, 23],
+  "search": {
+    "min_play": 1000,
+    "result_count": 20
+  }
+}

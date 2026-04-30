@@ -1,0 +1,16 @@
+# 登录凭证
+bili_credential.json
+
+# 运行时数据
+data/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# 临时文件
+qrcode*.png
+*.bak
+*.log
