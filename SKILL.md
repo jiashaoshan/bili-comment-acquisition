@@ -51,5 +51,14 @@ python3 scripts/bili_comment_acquisition.py --auto -u "https://your-product.com"
 
 - Python 3.10+
 - bilibili-api-python
+- requests
 - DeepSeek API Key（`DEEPSEEK_API_KEY` 环境变量）
-- B站登录凭证（扫码获取）
+- B站登录凭证（扫码获取，自动保存到 `bili_credential.json`）
+
+## 环境变量
+
+| 变量 | 说明 |
+|------|------|
+| `DEEPSEEK_API_KEY` | DeepSeek API Key（必需） |
+| `BILI_PRODUCT_URL` | 默认产品链接 |
+| `BILI_PRODUCT_NAME` | 默认产品名称 |

@@ -6,7 +6,8 @@ import json
 from pathlib import Path
 from bilibili_api.login_v2 import QrCodeLogin, QrCodeLoginEvents
 
-CRED_FILE = Path(__file__).parent / "bili_credential.json"
+CRED_FILE = Path(__file__).parent.parent / "bili_credential.json"
+# 注意：主程序从技能根目录加载 bili_credential.json
 
 async def main():
     qr = QrCodeLogin()

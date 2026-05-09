@@ -7,6 +7,14 @@
   "active_hours": [8, 23],
   "search": {
     "min_play": 1000,
+    "min_like_ratio": 0.01,
+    "max_comment_count": 500,
     "result_count": 20
+  },
+  "scoring": {
+    "hot_weight": 0.35,
+    "interact_weight": 0.35,
+    "fresh_weight": 0.20,
+    "quality_weight": 0.10
   }
 }
