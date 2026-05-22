@@ -61,7 +61,7 @@ metadata:
 ## 项目结构
 
 ```
-bilibili-mcp/
+bili_comment_acquisition/
 ├── bili_comment_acquisition.py   # 评论区获客主程序
 ├── bili_llm.py                   # LLM 调用模块（本地独立，无跨技能依赖）
 │   ├── call_llm()                # 通用 LLM 调用（千帆主用，DeepSeek 备选）
@@ -70,7 +70,9 @@ bilibili-mcp/
 │   └── analyze_product()         # 产品页面分析 → 结构化信息提取
 ├── bili_acquisition_skill.md     # 技能文档
 ├── config/
-│   └── keywords.json             # 种子关键词
+│   ├── publish.json                 # 发布配置
+│   ├── keywords.json                # 种子关键词
+│   └── llm.json                     # LLM 配置（千帆主用 + DeepSeek 备用）
 └── data/                         # 运行数据（已 gitignore）
     ├── bili-commented-history.json  # 评论历史去重
     └── bili_acq_*.log              # 运行日志（自动清理7天前的）
@@ -80,7 +82,8 @@ bilibili-mcp/
 
 - Python 3.10+
 - bilibili-api-python
-- 千帆 API Key 或 DeepSeek API Key（openclaw.json 或环境变量）
+- requests
+- 千帆 API Key + DeepSeek API Key（`config/llm.json`）
 - B站登录凭证（bili_credential.json，首次需扫码登录）
 
 ## 快速使用

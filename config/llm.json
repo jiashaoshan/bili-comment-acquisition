@@ -1,8 +1,8 @@
 {
   "primary": {
     "provider": "qianfan",
-    "api_url": "https://qianfan.baidubce.com/v2/chat/completions",
-    "api_key": "your_qianfan_api_key_here",
+    "api_url": "https://qianfan.baidubce.com/v2/coding/chat/completions",
+    "api_key": "bce-v3/ALTAKSP-7nCBCub9Id4dyDwPtt1UU/fb5f9bc5eb18c9de0aaed39a2ae510dfed4ae05b",
     "model": "qianfan-code-latest",
     "max_tokens": 8192,
     "timeout": 300
@@ -10,7 +10,7 @@
   "fallback": {
     "provider": "deepseek",
     "api_url": "https://api.deepseek.com/chat/completions",
-    "api_key": "your_deepseek_api_key_here",
+    "api_key": "sk-902c90eba8f641cc8477e903f0e37f93",
     "model": "deepseek-v4-flash",
     "max_tokens": 8192,
     "timeout": 300

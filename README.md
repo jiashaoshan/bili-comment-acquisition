@@ -23,7 +23,13 @@ pip install -r requirements.txt
 
 需要 Python 3.10+。
 
-### 2. B站扫码登录
+### 2. 安装 B站依赖
+
+```bash
+pip install bilibili-api-python requests
+```
+
+### 3. B站扫码登录
 
 ```bash
 python3 bili_login.py
@@ -31,13 +37,24 @@ python3 bili_login.py
 
 终端会显示二维码，用B站App扫码即可（凭证自动保存到 `bili_credential.json`）。
 
-### 3. 配置环境变量
+### 4. 配置 LLM
 
-```bash
-export DEEPSEEK_API_KEY="你的DeepSeek Key"
+编辑 `config/llm.json`，填入你的 API Key（支持千帆主用 + DeepSeek 备用）：
+
+```json
+{
+  "primary": {
+    "api_key": "你的千帆API Key"
+  },
+  "fallback": {
+    "api_key": "你的DeepSeek API Key"
+  }
+}
 ```
 
-### 4. 运行
+也可以设置环境变量 `DEEPSEEK_API_KEY` 作为兜底。
+
+### 5. 运行
 
 ```bash
 # 手动指定关键词
@@ -114,7 +131,7 @@ python3 bili_comment_acquisition.py -k AI工具 效率工具 大模型 -u "https
 |------|--------|------|
 | `max_comments_per_run` | 5 | 每次运行最多评论 |
 | `max_comments_per_day` | 20 | 每天评论上限 |
-| `max_comments_per_hour` | 3 | 每小时评论上限 |
+| `max_comments_per_hour` | 5 | 每小时评论上限 |
 | `base_interval_seconds` | 60 | 评论间隔（秒） |
 | `active_hours` | [8, 23] | 活跃时段 |
 | `search.min_play` | 100 | 最低播放量过滤 |
@@ -140,9 +157,13 @@ bili-comment-acquisition/
 ├── bili_comment_acquisition.py      # 主程序（async/await）
 ├── bili_llm.py                      # LLM 调用模块（独立，含SPA网页抓取）
 ├── bili_login.py                    # 命令行扫码登录
+├── scripts/
+│   ├── bili_login.py                # 备用扫码登录
+│   └── xhs_llm.py                   # 兼容脚本
 ├── config/
 │   ├── publish.json                 # 发布配置
-│   └── keywords.json                # 种子关键词
+│   ├── keywords.json                # 种子关键词
+│   └── llm.json                     # LLM 配置（千帆主用 + DeepSeek 备用）
 ├── data/                            # 运行时数据（自动创建，已gitignore）
 │   ├── bili-commented-history.json  # 评论历史去重
 │   └── bili_acq_*.log               # 运行日志（自动清理7天前的）
