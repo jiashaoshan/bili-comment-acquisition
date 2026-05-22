@@ -1,0 +1,18 @@
+{
+  "primary": {
+    "provider": "qianfan",
+    "api_url": "https://qianfan.baidubce.com/v2/chat/completions",
+    "api_key": "your_qianfan_api_key_here",
+    "model": "qianfan-code-latest",
+    "max_tokens": 8192,
+    "timeout": 300
+  },
+  "fallback": {
+    "provider": "deepseek",
+    "api_url": "https://api.deepseek.com/chat/completions",
+    "api_key": "your_deepseek_api_key_here",
+    "model": "deepseek-v4-flash",
+    "max_tokens": 8192,
+    "timeout": 300
+  }
+}

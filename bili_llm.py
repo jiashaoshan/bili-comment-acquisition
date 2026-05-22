@@ -19,7 +19,11 @@ LLM_RETRY_DELAY = 15
 FALLBACK_API_URL = None
 FALLBACK_API_KEY = None
 FALLBACK_MODEL = "deepseek-v4-flash"
-FALLBACK_PROVIDER_IDS = ["deepseek"]
+
+
+def _get_config_dir():
+    """返回 config/ 目录（相对于本脚本所在目录）"""
+    return os.path.join(os.path.dirname(os.path.abspath(__file__)), "config")
 
 
 def _load_llm_config():
@@ -27,35 +31,35 @@ def _load_llm_config():
     global FALLBACK_API_URL, FALLBACK_API_KEY, FALLBACK_MODEL
     if LLM_API_URL and LLM_API_KEY:
         return
-    try:
-        cfg_path = os.path.expanduser("~/.openclaw/openclaw.json")
-        if os.path.exists(cfg_path):
+
+    cfg_path = os.path.join(_get_config_dir(), "llm.json")
+    if os.path.exists(cfg_path):
+        try:
             with open(cfg_path) as f:
                 data = json.load(f)
-            providers = data.get("models", {}).get("providers", {})
-            for provider_id, p in providers.items():
-                pid = provider_id.lower()
-                if "qianfan" in pid or "baidu" in pid:
-                    LLM_API_URL = p.get("baseUrl", "") + "/chat/completions"
-                    LLM_API_KEY = p.get("apiKey", "")
-                    models = p.get("models", [])
-                    if models:
-                        DEFAULT_MODEL = models[0].get("id", "qianfan-code-latest")
-                    logger.info(f"主用: {LLM_API_URL} | 模型: {DEFAULT_MODEL}")
-                elif any(fid in pid for fid in FALLBACK_PROVIDER_IDS):
-                    if not FALLBACK_API_URL:
-                        FALLBACK_API_URL = p.get("baseUrl", "") + "/chat/completions"
-                        FALLBACK_API_KEY = p.get("apiKey", "")
-                        fb_models = p.get("models", [])
-                        if fb_models:
-                            FALLBACK_MODEL = fb_models[0].get("id", "deepseek-v4-flash")
-                        logger.info(f"备选: {FALLBACK_API_URL} | 模型: {FALLBACK_MODEL}")
-    except Exception as e:
-        logger.debug(f"读取 openclaw.json LLM 配置失败: {e}")
+            primary = data.get("primary", {})
+            fallback = data.get("fallback", {})
+
+            if primary.get("api_url") and primary.get("api_key"):
+                LLM_API_URL = primary["api_url"]
+                LLM_API_KEY = primary["api_key"]
+                if primary.get("model"):
+                    DEFAULT_MODEL = primary["model"]
+                logger.info(f"主用: {LLM_API_URL} | 模型: {DEFAULT_MODEL}")
+
+            if fallback.get("api_url") and fallback.get("api_key"):
+                FALLBACK_API_URL = fallback["api_url"]
+                FALLBACK_API_KEY = fallback["api_key"]
+                if fallback.get("model"):
+                    FALLBACK_MODEL = fallback["model"]
+                logger.info(f"备选: {FALLBACK_API_URL} | 模型: {FALLBACK_MODEL}")
+        except Exception as e:
+            logger.warning(f"读取 config/llm.json 失败: {e}")
 
     if not LLM_API_URL:
         LLM_API_URL = os.environ.get("LLM_API_URL", "https://api.deepseek.com/chat/completions")
         LLM_API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
+        logger.info(f"使用环境变量 LLM: {LLM_API_URL}")
 
 
 def call_llm(system_prompt: str, user_prompt: str, model: str = None,
