@@ -683,13 +683,31 @@ async def run(keyword: list = None, product_url: str = "", product_name: str = "
     results = await asyncio.gather(*tasks)
     scored_videos = [r for r in results if r is not None and r.get("llm_score", 0) > 0]
 
-    # 按LLM评分排序
-    scored_videos.sort(key=lambda x: x.get("llm_score", 0), reverse=True)
+    # 时效性衰减：pubdate越近评分加成，半年以上视频打折
+    import time
+    now_ts = time.time()
+    for v in scored_videos:
+        pub = v.get("pubdate", "")
+        if pub:
+            try:
+                pub_ts = datetime.fromisoformat(pub).timestamp()
+                days_old = (now_ts - pub_ts) / 86400
+                # 30天内无衰减，之后线性降至30%最低
+                freshness = max(0.3, 1.0 - max(0, (days_old - 30)) / 180)
+                v["_final_score"] = v.get("llm_score", 0) * freshness
+            except:
+                v["_final_score"] = v.get("llm_score", 0)
+        else:
+            v["_final_score"] = v.get("llm_score", 0)
+
+    # 按综合评分排序（LLM评分 × 时效性因子）
+    scored_videos.sort(key=lambda x: x.get("_final_score", 0), reverse=True)
     top_videos = scored_videos[:max_comments]
 
-    logger.info(f"\n获客潜力TOP {len(top_videos)}:")
+    logger.info(f"\n获客潜力TOP {len(top_videos)} (时效调整后):")
     for i, v in enumerate(top_videos, 1):
-        logger.info(f"  {i}. [{v['llm_score']:.0f}分] {v['title'][:40]} @{v['author']} (播放{v['play']})")
+        decay = v.get('_final_score', 0) / max(v.get('llm_score', 1), 1)
+        logger.info(f"  {i}. [{v['_final_score']:.0f}分] {v['title'][:40]} @{v['author']} (播放{v['play']}) 时效{decay:.2f}")
     print()
 
     # 步骤4: 生成评论
